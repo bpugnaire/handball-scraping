@@ -1,0 +1,7 @@
+{ 
+    "proligue": { 
+        "joueurs": "https://www.lnh.fr/proligue/stats/joueurs",
+        "gardiens": ""
+                },
+    "liquimoly-starligue": "https://www.lnh.fr/liquimoly-starligue/stats/joueurs"
+}
