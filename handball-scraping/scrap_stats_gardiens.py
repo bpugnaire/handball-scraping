@@ -4,12 +4,13 @@ import http.client
 import time
 import zlib
 
-conn = http.client.HTTPSConnection("www.lnh.fr")
+YEAR = ['2012-13','2013-14','2014-15','2015-16','2016-17','2017-18','2018-19','2019-20','2020-21','2021-22','2022-23']
 UNIVERS = ['d1-26623','d2-25326']
 
-YEAR = ['2012-13','2013-14','2014-15','2015-16','2016-17','2017-18','2018-19','2019-20','2020-21','2021-22','2022-23']
+conn = http.client.HTTPSConnection("www.lnh.fr")
+
 for i in range(28,35):
-    payload = f"seasons_id={i}&positions_name=all&orderby=stats_total_goals&type=joueurs&univers={UNIVERS[1]}&pagination-items=5000&pagination-current=1&contents_controller=sportsPlayersStats&contents_action=index_ajax"
+    payload = f"seasons_id={i}&positions_name=Gardien&orderby=stats_total_stopped&type=gardiens&univers={UNIVERS[1]}&pagination-items=500&contents_controller=sportsPlayersStats&contents_action=index_ajax"
 
     headers = {
         'cookie': "PHPSESSID=stj9tts0qaq9ovtf009flrb8ta",
@@ -30,6 +31,6 @@ for i in range(28,35):
     # Format the parsed html file
     strhtm = soup.prettify()
     result = pd.read_html(strhtm)
-    result[0].to_csv(f'data/proligue/stats_joueurs_proligue_{YEAR[i-24]}.csv')
+    result[0].to_csv(f'data/proligue/stats_gardiens_proligue_{YEAR[i-24]}.csv')
     time.sleep(2)
     
