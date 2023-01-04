@@ -4,9 +4,12 @@ import http.client
 import time
 import zlib
 
-YEAR = ['2012-13','2013-14','2014-15','2015-16','2016-17','2017-18','2018-19','2019-20','2020-21','2021-22','2022-23']
-COHORTE = ['PRO', 'CF', 'RES']
+SEASON_ID = [4,5,6,7,8,2,1,3]
+YEAR = ['2004-05','2005-06','2006-07','2007-08','2008-09','2009-10','2010-11','2011-12','2012-13','2013-14','2014-15','2015-16','2016-17','2017-18','2018-19','2019-20','2020-21','2021-22','2022-23']
 UNIVERS = ['d1-26623','d2-25326']
+LIGUE = ['D1H','D2H']
+COHORTE = ['PRO', 'CF', 'RES']
+
 def first_capital_letter(word):
     for i in range(0, len(word)) :
         if (word[i].isupper()) :
@@ -66,28 +69,39 @@ def get_player_info_df(data, cohorte):
 conn = http.client.HTTPSConnection("www.lnh.fr")
 
 
-for i in range(24,35):
-    df = []
-    for coh in COHORTE:
-        payload = f"seasons_id={i}&players_groups_slug={coh}&search=&pagination-items=5000&teams_id=all&pagination-current=1&univers={UNIVERS[1]}&contents_controller=sportsPlayers&contents_action=index_ajax"
-
-        headers = {
-            'cookie': "PHPSESSID=stj9tts0qaq9ovtf009flrb8ta",
-            'Accept-Encoding': "gzip, deflate, br",
-            'Content-Type': "application/x-www-form-urlencoded; charset=UTF-8"
-            }
-
-        conn.request("POST", "/ajaxpost1", payload, headers)
-
-        res = conn.getresponse()
-        data = res.read()
-        data = zlib.decompress( data , zlib.MAX_WBITS | 32).decode('utf-8')
-        player_info_df = get_player_info_df(data, coh)
-        if len(df) == 0:
-            df = player_info_df
+for u in UNIVERS:
+    if u == 'd1-26623':
+        x = 0
+        start_id = 16
+    else:
+        x = 1
+        start_id = 28
+    for i in range(start_id ,35):
+        if i <24:
+            season_id = SEASON_ID[i-16]
         else:
-            df = pd.concat([df,player_info_df])
-    df.to_csv(f'data/proligue/joueurs_proligue_{YEAR[i-24]}.csv')
-    time.sleep(2)
+            season_id = i
+        df = []
+        for coh in COHORTE:
+            payload = f"seasons_id={season_id}&players_groups_slug={coh}&search=&pagination-items=5000&teams_id=all&pagination-current=1&univers={u}&contents_controller=sportsPlayers&contents_action=index_ajax"
+
+            headers = {
+                'cookie': "PHPSESSID=stj9tts0qaq9ovtf009flrb8ta",
+                'Accept-Encoding': "gzip, deflate, br",
+                'Content-Type': "application/x-www-form-urlencoded; charset=UTF-8"
+                }
+
+            conn.request("POST", "/ajaxpost1", payload, headers)
+
+            res = conn.getresponse()
+            data = res.read()
+            data = zlib.decompress( data , zlib.MAX_WBITS | 32).decode('utf-8')
+            player_info_df = get_player_info_df(data, coh)
+            if len(df) == 0:
+                df = player_info_df
+            else:
+                df = pd.concat([df,player_info_df])
+        df.to_csv(f'data/{LIGUE[x]}/joueurs_{YEAR[i-16]}.csv')
+        time.sleep(1)
 
 
