@@ -101,7 +101,7 @@ for u in UNIVERS:
                 df = player_info_df
             else:
                 df = pd.concat([df,player_info_df])
-        df.to_csv(f'data/{LIGUE[x]}/joueurs_{YEAR[i-16]}.csv')
+        df.to_csv(f'data/RAW/{LIGUE[x]}/joueurs_{YEAR[i-16]}.csv')
         time.sleep(1)
 
 
